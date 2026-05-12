@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom'; // Добавили useNavigate
 import { Mail, Lock, BookOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -9,8 +9,9 @@ import { Button } from '../components/ui/Button';
 export function LoginPage() {
   const { user, login, isLoading } = useAuth();
   const { showToast } = useToast();
+  const navigate = useNavigate(); // Инициализируем навигацию
 
-  const [email, setEmail] = useState(''); // Прибрав забиті дані
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
@@ -29,11 +30,9 @@ export function LoginPage() {
     if (!validate()) return;
     
     try {
-      // Викликаємо функцію login з AuthContext
       await login(email, password);
       showToast('Ласкаво просимо!', 'success');
     } catch (err) {
-      // Сюди прилетить помилка, якщо пароль невірний або сервер лежить
       showToast(err instanceof Error ? err.message : 'Помилка авторизації', 'error');
     }
   }
@@ -87,7 +86,21 @@ export function LoginPage() {
             </Button>
           </form>
 
-          {/* Підказка з твоїм реальним створеним акаунтом */}
+          {/* Кнопка переходу на реєстрацію */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-zinc-500">
+              Немає акаунту?{' '}
+              <button 
+                type="button"
+                onClick={() => navigate('/register')} 
+                className="text-red-500 hover:text-red-600 font-medium transition-colors hover:underline"
+              >
+                Зареєструватися
+              </button>
+            </p>
+          </div>
+
+          {/* Підказка */}
           <div className="mt-6 p-3 bg-red-50/50 rounded-xl border border-red-100">
             <p className="text-xs text-red-600 text-center">
               Твій локальний акаунт:<br/>
