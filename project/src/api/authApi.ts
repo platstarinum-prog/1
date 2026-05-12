@@ -1,6 +1,7 @@
 import type { AuthUser } from '../models/user';
 
-const API_URL = 'http://localhost:3001';
+// Твой новый живой адрес бэкенда
+const API_URL = 'https://2-production-f179.up.railway.app';
 
 export const authApi = {
   /**
@@ -22,13 +23,15 @@ export const authApi = {
     
     if (data.token) {
       localStorage.setItem('token', data.token);
+      // Сохраняем данные юзера, чтобы authService мог их прочитать
+      localStorage.setItem('user', JSON.stringify(data.user));
     }
 
     return data.user;
   },
 
   /**
-   * Регистрация нового пользователя
+   * Реєстрація нового користувача
    */
   register: async (name: string, email: string, password: string): Promise<AuthUser> => {
     const response = await fetch(`${API_URL}/auth/register`, {
@@ -44,19 +47,22 @@ export const authApi = {
 
     const data = await response.json();
 
-    // Сразу после регистрации обычно тоже выдается токен, чтобы юзер зашел автоматически
     if (data.token) {
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
     }
 
-    return data.user;
+    // Если бэкенд возвращает только юзера без обертки data.user, 
+    // попробуй просто: return data; но в коде выше я настроил под стандарт
+    return data.user || data; 
   },
 
   /**
-   * Выход из системы
+   * Вихід із системи
    */
   logout: async (): Promise<void> => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     return Promise.resolve();
   }
 };
