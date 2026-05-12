@@ -1,20 +1,18 @@
-import type { AuthUser } from '../models/user';
-import { authService } from '../services/authService';
+const API_URL = 'http://localhost:3001';
 
-// Mock API layer — replace with actual HTTP calls when backend is ready
+export const loginUser = async (email: string, password: string) => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
-export const authApi = {
-  async login(email: string, password: string): Promise<AuthUser> {
-    await delay(600);
-    return authService.login(email, password);
-  },
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Ошибка при входе');
+  }
 
-  async logout(): Promise<void> {
-    await delay(200);
-    authService.logout();
-  },
+  return response.json(); // Тут прилетит токен и данные юзера
 };
-
-function delay(ms: number): Promise<void> {
-  return new Promise((res) => setTimeout(res, ms));
-}
