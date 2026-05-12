@@ -10,8 +10,8 @@ export function LoginPage() {
   const { user, login, isLoading } = useAuth();
   const { showToast } = useToast();
 
-  const [email, setEmail] = useState('admin@taskdiary.app');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState(''); // Прибрав забиті дані
+  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   if (user) return <Navigate to="/dashboard" replace />;
@@ -27,10 +27,13 @@ export function LoginPage() {
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!validate()) return;
+    
     try {
+      // Викликаємо функцію login з AuthContext
       await login(email, password);
       showToast('Ласкаво просимо!', 'success');
     } catch (err) {
+      // Сюди прилетить помилка, якщо пароль невірний або сервер лежить
       showToast(err instanceof Error ? err.message : 'Помилка авторизації', 'error');
     }
   }
@@ -42,7 +45,6 @@ export function LoginPage() {
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-zinc-100/60 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
       <div className="relative w-full max-w-sm">
-        {/* Card */}
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-zinc-200/60 shadow-xl shadow-zinc-200/40 px-8 py-10">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
@@ -53,12 +55,11 @@ export function LoginPage() {
             <p className="text-sm text-zinc-400 mt-1">Увійдіть до свого облікового запису</p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Email або логін"
+              label="Email"
               type="email"
-              placeholder="admin@taskdiary.app"
+              placeholder="vash-email@mail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={errors.email}
@@ -86,13 +87,11 @@ export function LoginPage() {
             </Button>
           </form>
 
-          {/* Hint */}
-          <div className="mt-6 p-3 bg-zinc-50 rounded-xl border border-zinc-100">
-            <p className="text-xs text-zinc-500 text-center">
-              Тестовий акаунт:{' '}
-              <span className="font-medium text-zinc-700">admin@taskdiary.app</span>
-              {' / '}
-              <span className="font-medium text-zinc-700">password123</span>
+          {/* Підказка з твоїм реальним створеним акаунтом */}
+          <div className="mt-6 p-3 bg-red-50/50 rounded-xl border border-red-100">
+            <p className="text-xs text-red-600 text-center">
+              Твій локальний акаунт:<br/>
+              <span className="font-bold">test@test.com</span> / <span className="font-bold">123456</span>
             </p>
           </div>
         </div>
