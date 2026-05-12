@@ -100,13 +100,7 @@ export function LoginPage() {
             </p>
           </div>
 
-          {/* Підказка */}
-          <div className="mt-6 p-3 bg-red-50/50 rounded-xl border border-red-100">
-            <p className="text-xs text-red-600 text-center">
-              Твій локальний акаунт:<br/>
-              <span className="font-bold">test@test.com</span> / <span className="font-bold">123456</span>
-            </p>
-          </div>
+        
         </div>
 
         <p className="text-center text-xs text-zinc-400 mt-6">
