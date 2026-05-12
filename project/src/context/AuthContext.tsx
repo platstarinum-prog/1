@@ -7,6 +7,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>; // Добавили тип
   logout: () => Promise<void>;
 }
 
@@ -16,6 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => authService.getCurrentUser());
   const [isLoading, setIsLoading] = useState(false);
 
+  // Вход
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
@@ -26,6 +28,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // РЕГИСТРАЦИЯ (Новый метод)
+  const register = useCallback(async (name: string, email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const authUser = await authApi.register(name, email, password);
+      setUser(authUser); // Сразу логиним юзера после регистрации
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Выход
   const logout = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -37,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
